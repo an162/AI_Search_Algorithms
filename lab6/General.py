@@ -1,28 +1,53 @@
 from collections import deque
 from Travel import Node
 from Travel import Travel
+from ucsTravel import Travel
+import heapq
+
+class PriorityQueue:
+    def __init__(self):
+        self.elements = []
+    
+    def empty(self):
+        return len(self.elements) == 0
+    
+    def append(self, item):
+        heapq.heappush(self.elements, (item.cost, item))
+    
+    def pop(self):
+        return heapq.heappop(self.elements)[1]
+
 # Implement the graph search algorithm
 def graph_search(problem, data_struct='fifo', depth=None):
-    frontier = deque() if data_struct == 'fifo' else []
-    explored = []
+    if data_struct == 'fifo':
+        frontier = deque()  
+    elif  data_struct == 'lifo':
+        frontier =[]
+    elif data_struct=='ucs':
+        frontier=PriorityQueue()
+    explored = set()  # Track explored states using a set
 
     # Initialize the frontier using the initial state of the problem
     initial_node = Node(problem.state)
     frontier.append(initial_node)
 
     while frontier:
-        node = frontier.popleft() if data_struct == 'fifo' else frontier.pop()
+        if data_struct == 'fifo' or data_struct == 'lifo':
+            node = frontier.popleft() if data_struct == 'fifo' else frontier.pop()
+        elif data_struct == 'ucs':
+            node = frontier.pop()  # Use pop operation for PriorityQueue
         if problem.is_goal_test(node.state):
             return node  # Solution found
-        problem.printNode("kikkk",node)
-        explored.append(node.state)
-
+        
+        explored.add(node.state)  # Add the current state to the explored set
+        problem.printNode("add message",node)
         if depth is None or node.depth < depth:
             children = problem.expand_node(node)
             for child in children:
-                if child.state not in explored and child not in frontier:
+                if child.state not in explored and child not in list(frontier.elements):
                     frontier.append(child)
-        if depth==node.depth and not problem.is_goal_test(node.state):
+                    explored.add(child.state)  # Add the child state to the explored set
+        if depth == node.depth and not problem.is_goal_test(node.state):
             return "failure" 
     return "failure"  # No solution found
 
@@ -133,7 +158,7 @@ def iterative_deepening_search(problem,depth):
 
 # Main code
 # Solve the Travel Planning problem using IDS
-solution = iterative_deepening_search(eight_puzzle,60)
+solution = graph_search(eight_puzzle,'ucs')
 
 # Display solution information
 if solution == "failure":

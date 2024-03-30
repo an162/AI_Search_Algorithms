@@ -90,7 +90,7 @@ class Travel:
         for action in keys_array:
                     
                     child_state = action
-                    child_node = Node(child_state, parent=node, action=action, cost=node.cost + 1)#get the cost right here
+                    child_node = Node(child_state, parent=node, action=action, cost=valid_neighbors[action] )#get the cost right here
                     child_nodes.append(child_node)
         return child_nodes
 
