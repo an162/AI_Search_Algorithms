@@ -1,7 +1,8 @@
 from collections import deque
-from Travel import Node
-from Travel import Travel
+#from Travel import Node
+#from Travel import Travel
 from ucsTravel import Travel
+from ucsTravel import Node
 import heapq
 
 class PriorityQueue:
@@ -158,6 +159,7 @@ def iterative_deepening_search(problem,depth):
 
 # Main code
 # Solve the Travel Planning problem using IDS
+print("UCS Search: +++++++++++++++++++++++++++++++++++++++")
 solution = graph_search(eight_puzzle,'ucs')
 
 # Display solution information
