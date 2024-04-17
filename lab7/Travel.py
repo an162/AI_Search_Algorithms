@@ -45,7 +45,14 @@ class Travel:
         self.distances = distances
         self.actions = actions
         self.path_cost = path_cost
+    def heuristic(self, state, goal_state):
+        # Calculate heuristic distance between two states
+        # Use the provided get_cowl_flew_distance function to calculate heuristic estimate
+        coordinates = self.state_transition_model[state]['Coordinates']
+        goal_coordinates = self.state_transition_model[goal_state]['Coordinates']
+        return self.get_cowl_flew_distance(coordinates, goal_coordinates)
 
+  
     def is_goal_test(self, goal_test):
         return goal_test == self.goal_state
     # get the cowl flew distance from the current node to the goal node
@@ -104,10 +111,30 @@ class Travel:
         for action in keys_array:
                     
                     child_state = action
-                    step_cost = valid_neighbors[action]
-                    remaining_distance = self.get_cowl_flew_distance(coordinates, coordinates_goal)
-                    total_cost = node.cost + step_cost + remaining_distance                   
-                    child_node = Node(child_state, parent=node, action=action, cost=total_cost )#get the cost right here
+                    g = node.cost + self.path_cost
+                    
+                    h = self.heuristic(child_state, self.goal_state)
+                    total_cost = g + h      
+                    child_node = Node(child_state, parent=node, action=action, cost=total_cost)#get the cost right here
+                    child_nodes.append(child_node)
+        return child_nodes
+    def expand_node_bfs(self, node):
+        state = node.state
+        valid_actions = self.get_valid_actions(state)
+        valid_neighbors ,coordinates = self.get_valid_actions2(state)
+        valid_neighbors_goal ,coordinates_goal = self.get_valid_actions2(self.goal_state)
+        child_nodes = []
+        
+        keys_array = list(valid_neighbors.keys())
+        
+        for action in keys_array:
+                    
+                    child_state = action
+                    g = node.cost + self.path_cost
+                    
+                    h = self.heuristic(child_state, self.goal_state)
+                    total_cost = g + h      
+                    child_node = Node(child_state, parent=node, action=action, cost=h)#get the cost right here
                     child_nodes.append(child_node)
         return child_nodes
 
@@ -133,3 +160,4 @@ class Travel:
       else:
         print("Coordinates: N/A")
         print("Neighbors: N/A")
+    

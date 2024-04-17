@@ -24,29 +24,44 @@ def graph_search(problem, data_struct='fifo', depth=None):
         frontier = deque()  
     elif  data_struct == 'lifo':
         frontier =[]
-    elif data_struct=='ucs':
+    elif data_struct=='ucs' or  data_struct=="A*" or data_struct=="Best First Search":
         frontier=PriorityQueue()
     explored = set()  # Track explored states using a set
 
     # Initialize the frontier using the initial state of the problem
     initial_node = Node(problem.state)
-    frontier.append(initial_node)
+    if data_struct == "A*":
+       initial_node.cost=0
+       cost_so_far = {initial_node.state: 0}
+       frontier.append(initial_node)
+    elif data_struct == "Best First Search":
+        initial_node.cost=problem.heuristic(initial_node.state,problem.goal_state)
+        frontier.append(initial_node)
 
+  
     while frontier:
         if data_struct == 'fifo' or data_struct == 'lifo':
             node = frontier.popleft() if data_struct == 'fifo' else frontier.pop()
-        elif data_struct == 'ucs':
+        else:
             node = frontier.pop()  # Use pop operation for PriorityQueue
+            problem.printNode("add message",node)
         if problem.is_goal_test(node.state):
+            
             return node  # Solution found
         
         explored.add(node.state)  # Add the current state to the explored set
-        problem.printNode("add message",node)
+        
         if depth is None or node.depth < depth:
             children = problem.expand_node(node)
             for child in children:
                 if child.state not in explored and child not in list(frontier.elements):
+                    
                     frontier.append(child)
+                    if data_struct=="A*":  
+                     child.cost= child.cost + problem.heuristic(child.state,problem.goal_state)
+                     cost_so_far[child.state] = child.cost
+                    elif data_struct == "Best First Search":
+                     child.cost= problem.heuristic(child.state, problem.goal_state)
                     explored.add(child.state)  # Add the child state to the explored set
         if depth == node.depth and not problem.is_goal_test(node.state):
             return "failure" 
@@ -124,7 +139,7 @@ state_transition_model = {
     "Tindouf": {
         "Neighbors": {"Bechar": 300, "Bejaia": 600, "Guelma": 700, "Skikda": 800, "Bouira": 650},
         "Coordinates": (27.6706, -8.1476)}}
-
+"""""
 # Initialize an 8-puzzle object and shuffle it
 eight_puzzle = Travel(initial_state, goal_state, state_transition_model)
 
@@ -151,8 +166,9 @@ def iterative_deepening_search(problem,depth):
 
 # Main code
 # Solve the Travel Planning problem using IDS
+
 print("heuristic usage: +++++++++++++++++++++++++++++++++++++++")
-solution = graph_search(eight_puzzle,'ucs')
+solution = graph_search(eight_puzzle,'A*')
 
 # Display solution information
 if solution == "failure":
@@ -161,3 +177,26 @@ else:
     print("Solution Node Cost:", solution.cost)
     print("Number of Steps:", solution.depth)
     print("Depth of Solution Node:", solution.depth)
+"""""
+
+# Define the problem instance
+problem = Travel(initial_state, goal_state, state_transition_model)
+
+# Solve using A*
+solution_astar = graph_search(problem, "A*")
+
+
+# Display metrics for A* solution
+print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<A* Solution:")
+print("Cost:", solution_astar.cost)
+print("Number of steps (explored nodes):", solution_astar.depth)
+print("Depth of the solution node:", solution_astar.depth)
+
+# Solve using Best First Search
+solution_best_first_search = graph_search(problem, "Best First Search")
+
+# Display metrics for Best First Search solution
+print("\nBest First Search Solution:")
+print("Cost:", solution_best_first_search.cost)
+print("Number of steps (explored nodes):", solution_best_first_search.depth)
+print("Depth of the solution node:", solution_best_first_search.depth)
