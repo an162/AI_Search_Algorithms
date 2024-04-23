@@ -4,13 +4,13 @@ from math import radians, sin, cos, sqrt, atan2
 
 
 class Node:
-    def __init__(self, state, parent=None, action=None, cost=0):#add priority
+    def __init__(self, state, parent=None, action=None, cost=0, priority=0):#add priority
         self.state = state
         self.parent = parent  # Parent node
         self.action = action  # Action performed to reach this node
         self.cost = cost  # Cost to reach this node
         self.depth = 0  # Depth of the node, initialized to 0
-
+        self.priority=priority
         if parent is not None:
             self.depth = parent.depth + 1
 
@@ -45,7 +45,7 @@ class Travel:
         self.distances = distances
         self.actions = actions
         self.path_cost = path_cost
-    def heuristic(self, state, goal_state):
+    def heuristic(self, state, goal_state, method=False):
         # Calculate heuristic distance between two states
         # Use the provided get_cowl_flew_distance function to calculate heuristic estimate
         coordinates = self.state_transition_model[state]['Coordinates']
@@ -111,11 +111,12 @@ class Travel:
         for action in keys_array:
             #class gene searcg problem ser fubc        
                     child_state = action
+                    
                     g = node.cost + self.path_cost
                     
                     h = self.heuristic(child_state, self.goal_state)
-                    total_cost = g + h      
-                    child_node = Node(child_state, parent=node, action=action, cost=total_cost)#get the cost right here
+                    pr = g + h      
+                    child_node = Node(child_state, parent=node, action=action,  cost=(valid_neighbors[action]+node.cost), priority=pr)#get the cost right here
                     child_nodes.append(child_node)
         return child_nodes
     def expand_node_idA(self, node):
@@ -169,6 +170,7 @@ class Travel:
       print("Action:", node.action)
       print("Cost:", node.cost)
       print("Depth:", node.depth)
+      print("Priority:", node.priority)
     
     # Check if the state has coordinates in the state transition model
       if node.state in self.state_transition_model:

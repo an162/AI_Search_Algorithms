@@ -17,9 +17,10 @@ class PriorityQueue:
     
     def pop(self):
         return heapq.heappop(self.elements)[1]
-
+class Formal_search:
+ 
 # Implement the graph search algorithm
-def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
+ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
     if data_struct == 'fifo':
         frontier = deque()  
     elif  data_struct == 'lifo' or  data_struct == 'cldfs': #dfs
@@ -34,7 +35,7 @@ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
     initial_node.cost=0
     if data_struct == "A*":
        initial_node.cost=0
-      # cost_so_far = {initial_node.state: 0}
+       cost_so_far = {initial_node.state: 0}
        
     elif data_struct == "Best First Search":
         initial_node.cost=problem.heuristic(initial_node.state,problem.goal_state)
@@ -65,7 +66,7 @@ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
                        frontier.append(child)
                     if data_struct=="A*":  
                      child.cost= child.cost + problem.heuristic(child.state,problem.goal_state)
-                   #  cost_so_far[child.state] = child.cost
+                     cost_so_far[child.state] = child.cost
                     elif data_struct == "Best First Search":
                      child.cost= problem.heuristic(child.state, problem.goal_state)
                     explored.add(child.state)  # Add the child state to the explored set
@@ -75,7 +76,7 @@ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
     return "failure"  # No solution found
 
 def cost_limited_depth_first_search(problem, cost_limit):
-    result = graph_search(problem, data_struct='lifo', cost_lim=cost_limit)
+    result = Formal_search.graph_search(problem, data_struct='lifo', cost_lim=cost_limit)
     if isinstance(result, Node):
         return result
     else:
@@ -205,7 +206,7 @@ else:
 
 # Define the problem instance
 problem = Travel(initial_state, goal_state, state_transition_model)
-
+"""""
 # Solve using A*
 solution_astar = graph_search(problem, "A*")
 
@@ -215,7 +216,7 @@ print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<A* Solution:")
 print("Cost:", solution_astar.cost)
 print("Number of steps (explored nodes):", solution_astar.depth)
 print("Depth of the solution node:", solution_astar.depth)
-
+ 
 # Solve using Best First Search
 
 solution_best_first_search = graph_search(problem, "Best First Search")
@@ -249,4 +250,4 @@ if isinstance(solution_node, Node):
     print("Depth of the solution node:", solution_node.depth)
 else:
     print("No solution found within the cost limit.")
-    """""
+   

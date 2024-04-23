@@ -18,6 +18,7 @@ class PriorityQueue:
     def pop(self):
         return heapq.heappop(self.elements)[1]
 
+ 
 # Implement the graph search algorithm
 def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
     if data_struct == 'fifo':
@@ -31,13 +32,13 @@ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
 
     # Initialize the frontier using the initial state of the problem
     initial_node = Node(problem.state)
-    initial_node.cost=0
+    initial_node.priority=0
     if data_struct == "A*":
-       initial_node.cost=0
-      # cost_so_far = {initial_node.state: 0}
+       initial_node.priority=0
+       cost_so_far = {initial_node.state: 0}
        
     elif data_struct == "Best First Search":
-        initial_node.cost=problem.heuristic(initial_node.state,problem.goal_state)
+        initial_node.priority=problem.heuristic(initial_node.state,problem.goal_state)
     frontier.append(initial_node)
     
   
@@ -58,16 +59,19 @@ def graph_search(problem, data_struct='fifo', depth=None, cost_lim=None):
             for child in children:
                 if child.state not in explored:
                     if isinstance(frontier, PriorityQueue):
-                     if child not in list(frontier.elements):
-                      frontier.append(child)
-                     else:
-                      if child not in frontier:
-                       frontier.append(child)
-                    if data_struct=="A*":  
-                     child.cost= child.cost + problem.heuristic(child.state,problem.goal_state)
-                   #  cost_so_far[child.state] = child.cost
+                        if child not in list(frontier.elements):
+                            frontier.append(child)
+                    else:
+                        if child not in frontier:
+                            frontier.append(child)
+                    
+                    if data_struct=="A*":
+                        child.priority= child.cost + problem.heuristic(child.state,problem.goal_state)
+                        cost_so_far[child.state] = child.cost
+                     
                     elif data_struct == "Best First Search":
-                     child.cost= problem.heuristic(child.state, problem.goal_state)
+                        child.priority= problem.heuristic(child.state, problem.goal_state)
+                    
                     explored.add(child.state)  # Add the child state to the explored set
                    
         if depth == node.depth and not problem.is_goal_test(node.state):
@@ -113,7 +117,7 @@ state_transition_model = {
         "Coordinates": (36.7117, 4.0456)
     },
     "Tlemcen": {
-        "Neighbors": {"Oran": 200, "Sidi Bel Abbes": 120, "Mascara": 180, "Guelma": 350},
+        "Neighbors": {"Oran": 200, "Bejaia": 120, "Mascara": 180, "Guelma": 350},
         "Coordinates": (34.8888, -1.3153)
     },
     "Annaba": {
@@ -213,15 +217,17 @@ solution_astar = graph_search(problem, "A*")
 # Display metrics for A* solution
 print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<A* Solution:")
 print("Cost:", solution_astar.cost)
+print("prioriry of the solution node:", solution_astar.priority)
 print("Number of steps (explored nodes):", solution_astar.depth)
 print("Depth of the solution node:", solution_astar.depth)
-
+ 
 # Solve using Best First Search
 
 solution_best_first_search = graph_search(problem, "Best First Search")
 # Display metrics for Best First Search solution
 print("\nBest First Search Solution:")
 print("Cost:", solution_best_first_search.cost)
+print("priority of the solution node:", solution_best_first_search.priority)
 print("Number of steps (explored nodes):", solution_best_first_search.depth)
 print("Depth of the solution node:", solution_best_first_search.depth)
 #
@@ -249,4 +255,4 @@ if isinstance(solution_node, Node):
     print("Depth of the solution node:", solution_node.depth)
 else:
     print("No solution found within the cost limit.")
-    """""
+   """""
