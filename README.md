@@ -1,6 +1,9 @@
 ﻿# AI_Search_Algorithms
+informed, uninformed, local and adversarial searches are used
+dfs, bfs, ids, A*, ucs, hill climbing, minimax...
+Minimax: (The MiniMaxAgent represents an AI agent that utilizes the minimax algorithm to play optimally against a human player in a game of Tic-Tac-Toe in lab10)
 
-the algorithms used to solve a traveling problems:
+some of the algorithms used to solve the problems:
 
 
 Algorithm 1: Depth Limited Search algorithm
